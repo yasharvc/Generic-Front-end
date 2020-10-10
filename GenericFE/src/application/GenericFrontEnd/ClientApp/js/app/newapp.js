@@ -1,22 +1,21 @@
 var APP = {};
 var initialData = {
-	applicationInfo : {
-		inMaintenance:false,
-		title:"ACCOUNTING",
-		copyright:"copyright by phigaro 2020".toLocaleUpperCase(),
-		desc:"BY PHIGARO",
-		userId:"Yashar",
-		userInfo:"Software Engineer",
-		logoImageURL:"/images/Tribit.png",
-		i18n:{
-			lang:1033,
-			translate:false
-		}
-	},
+	applicationInfo: {
+		inMaintenance: false,
+		title: "",
+		copyright: "",
+		desc: "",
+		userId: "Yashar",
+		userInfo: "Software Engineer",
+		logoImageURL: "",
+		i18n: {
+			lang: 1033,
+			translate: true
+		}},
 	formDATA:{},
 	props:{
 		disable:false,
-		inProgress:false,
+		inProgress:true,
 		fatalError:false,
 		token:"",
 		leftDrawerOpen: true,
@@ -98,6 +97,10 @@ document.addEventListener('DOMContentLoaded', function() {
 			return initialData;
 		},
 		created: function () {
+			httpGetAsync("/API/ApplicationInfo").then(function (res) {
+				initialData.applicationInfo = JSON.parse(res.responseText);
+				APP.props.inProgress = false;
+			});
 			initVueQuasarApp(this);
 		},
 		methods:{

@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\Core\Core.csproj" />
+    <ProjectReference Include="..\..\business\Models\Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>

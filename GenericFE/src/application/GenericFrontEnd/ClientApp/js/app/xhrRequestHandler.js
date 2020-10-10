@@ -23,7 +23,6 @@ function httpPostSync(url,data,headers)
 }
 //headers = [{x:"y"},{Authorization:"Bearer dsadsad"}]
 function httpVerbAsync(verb,url,data,headers){
-	debugger;
 	headers = isNullOrUndefined(headers) ? [] : headers;
 	if(typeof data === 'object')
 		data = JSON.stringify(data);
