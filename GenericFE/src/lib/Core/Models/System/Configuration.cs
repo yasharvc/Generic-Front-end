@@ -9,6 +9,15 @@ namespace Core.Models.System
 		public int MaxRequestBodySize { get; set; }
 		public string StaticFilePath { get; set; }
 		public string ListeningURL { get; set; }
+		private string _gqlEndpoint = "/graphql";
+		public string GraphQLEndpoint
+		{
+			get => _gqlEndpoint;
+			set
+			{
+				_gqlEndpoint = $"{(value.StartsWith("/") ? "" : "/")}{value}";
+			}
+		}
 		public bool EnableHTTPS { get; set; }
 		public int HTTPSPort { get; set; }
 		public string GetAbsoluteStaticFilePath()

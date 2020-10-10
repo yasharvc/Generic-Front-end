@@ -1,17 +1,6 @@
 var APP = {};
 var initialData = {
-	applicationInfo: {
-		inMaintenance: false,
-		title: "",
-		copyright: "",
-		desc: "",
-		userId: "Yashar",
-		userInfo: "Software Engineer",
-		logoImageURL: "",
-		i18n: {
-			lang: 1033,
-			translate: true
-		}},
+	applicationInfo: {},
 	formDATA:{},
 	props:{
 		disable:false,
@@ -97,10 +86,16 @@ document.addEventListener('DOMContentLoaded', function() {
 			return initialData;
 		},
 		created: function () {
-			httpGetAsync("/API/ApplicationInfo").then(function (res) {
-				initialData.applicationInfo = JSON.parse(res.responseText);
-				APP.props.inProgress = false;
-			});
+			//httpGetAsync("/API/ApplicationInfo").then(function (res) {
+			//	initialData.applicationInfo = JSON.parse(res.responseText);
+			//	APP.props.inProgress = false;
+			//});
+			GraphqlPostAsync('/graphql', '{applicationInfo{copyright,desc,i18n{lang,translate,},inMaintenance,logoImageURL,title,userId,userInfo,}}')
+				.then(function (res) {
+					debugger;
+					initialData.applicationInfo = res.data.applicationInfo;
+					APP.props.inProgress = false;
+				});
 			initVueQuasarApp(this);
 		},
 		methods:{

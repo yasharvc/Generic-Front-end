@@ -1,3 +1,5 @@
+using HotChocolate.AspNetCore;
+using HotChocolate.AspNetCore.Voyager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,18 +13,18 @@ namespace GenericFrontEnd
 	public class Startup
 	{
 		IWebHostEnvironment Environment { get; set; }
+		IConfiguration EnvironmentConfiguration => Program.EnvironmentConfiguration;
 		public Startup(IConfiguration configuration, IWebHostEnvironment env)
 		{
 			Environment = env;
-			Configuration = configuration;
 		}
 
-		public IConfiguration Configuration { get; }
 
 		public void ConfigureServices(IServiceCollection services)
 		{
 			AddBaseServices(services);
 			AddMVCServices(services);
+			new IoC().AddServices(services, EnvironmentConfiguration, Environment, Program.Configuration);
 		}
 
 		private void AddMVCServices(IServiceCollection services)
@@ -114,7 +116,7 @@ namespace GenericFrontEnd
 				app.UseHttpsRedirection();
 
 			app.UseWebSockets();
-			//Graphql setup
+			UseGraphQL(app);
 
 			UseCORS(app);
 
@@ -129,6 +131,14 @@ namespace GenericFrontEnd
 					pattern: "{controller}/{action=Index}/{id?}");
 			});
 
+		}
+
+		private void UseGraphQL(IApplicationBuilder app)
+		{
+			app.UseGraphQL(Program.Configuration.GraphQLEndpoint)
+			   .UseGraphiQL(Program.Configuration.GraphQLEndpoint)
+			   .UsePlayground(Program.Configuration.GraphQLEndpoint)
+			   .UseVoyager(Program.Configuration.GraphQLEndpoint);
 		}
 
 		private static void UseCORS(IApplicationBuilder app)
