@@ -1,3 +1,4 @@
+using Core.Helper;
 using Core.Models.System;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -36,7 +37,10 @@ namespace GenericFrontEnd
 			LoadConfiguration();
 		}
 
-		private static void LoadConfiguration() => EnvironmentConfiguration.Bind(nameof(Configuration), Configuration);
+		private static void LoadConfiguration()
+		{
+			EnvironmentConfiguration.Bind(nameof(Configuration), Configuration);
+		}
 
 		public static IWebHostBuilder CreateHostBuilder(string[] args)
 		{

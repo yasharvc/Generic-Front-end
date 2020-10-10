@@ -21,11 +21,45 @@ namespace GenericFrontEnd
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+			AddBaseServices(services);
+			AddMVCServices(services);
+		}
+
+		private void AddMVCServices(IServiceCollection services)
+		{
 			services.AddControllersWithViews();
-			services.AddSpaStaticFiles(configuration =>
-			{
-				configuration.RootPath = Program.Configuration.StaticFilePath;
+			services.AddResponseCompression();
+		}
+
+		private void AddBaseServices(IServiceCollection services)
+		{
+			services.AddSingleton(Environment);
+			services.AddSingleton(Program.Configuration);
+			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+			ConfigureCORSService(services);
+
+			ConfigureHTTPSService(services);
+			ConfigureSpa(services);
+		}
+
+		private void ConfigureSpa(IServiceCollection services) => services.AddSpaStaticFiles(configuration => configuration.RootPath = Program.Configuration.GetAbsoluteStaticFilePath());
+
+		private void ConfigureCORSService(IServiceCollection services)
+		{
+			services.AddCors(options => {
+				options.AddDefaultPolicy(
+					builder => {
+						builder
+						.AllowAnyOrigin()
+						.AllowAnyMethod()
+						.AllowAnyHeader();
+					});
 			});
+		}
+
+		private void ConfigureHTTPSService(IServiceCollection services)
+		{
 			if (Program.Configuration.EnableHTTPS)
 			{
 				services.AddHsts(options =>
@@ -44,8 +78,8 @@ namespace GenericFrontEnd
 						options.HttpsPort = Program.Configuration.HTTPSPort;
 					});
 				}
-				else 
-				{ 
+				else
+				{
 					services.AddHttpsRedirection(options =>
 					{
 						options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
@@ -63,7 +97,7 @@ namespace GenericFrontEnd
 			});
 
 			AuthenticationSetup(app);
-			//app.UseResponseCompression();
+			app.UseResponseCompression();
 
 			if (env.IsDevelopment())
 			{
@@ -72,25 +106,21 @@ namespace GenericFrontEnd
 			else
 			{
 				app.UseExceptionHandler("/Error");
-				if (Program.Configuration.EnableHTTPS) 
+				if (Program.Configuration.EnableHTTPS)
 					app.UseHsts();
 			}
 
-			if(Program.Configuration.EnableHTTPS)
+			if (Program.Configuration.EnableHTTPS)
 				app.UseHttpsRedirection();
+
 			app.UseWebSockets();
 			//Graphql setup
 
-			app.UseCors(option => option
-			   .AllowAnyOrigin()
-			   .AllowAnyMethod()
-			   .AllowAnyHeader());
+			UseCORS(app);
 
 			app.UseRouting();
 
-			app.UseStaticFiles();
-			app.UseSpaStaticFiles();
-
+			UseStaticAndSPA(app);
 
 			app.UseEndpoints(endpoints =>
 			{
@@ -99,6 +129,21 @@ namespace GenericFrontEnd
 					pattern: "{controller}/{action=Index}/{id?}");
 			});
 
+		}
+
+		private static void UseCORS(IApplicationBuilder app)
+		{
+			app.UseCors(option => option
+						   .AllowAnyOrigin()
+						   .AllowAnyMethod()
+						   .AllowAnyHeader());
+		}
+
+		private static void UseStaticAndSPA(IApplicationBuilder app)
+		{
+			app.UseStaticFiles();
+			app.UseSpaStaticFiles();
+			app.UseSpaStaticFiles();
 			app.UseSpa(spa =>
 			{
 				spa.Options.SourcePath = Program.Configuration.StaticFilePath;
