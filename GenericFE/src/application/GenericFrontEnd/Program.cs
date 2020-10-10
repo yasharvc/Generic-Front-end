@@ -15,7 +15,7 @@ namespace GenericFrontEnd
 
 		private static void LoadConfiguration(string[] args)
 		{
-			throw new NotImplementedException();
+			
 		}
 
 		public static IHostBuilder CreateHostBuilder(string[] args) =>
