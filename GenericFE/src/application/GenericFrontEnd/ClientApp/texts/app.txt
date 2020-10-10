@@ -1,0 +1,56 @@
+* Add language select to header
+
+* Menu kinds:
+	-> Logout
+	-> Open one instance tab
+	-> Open multi instance tab
+	-> Redirect
+
+* Tab kinds:
+	-> One instance tab -> Like home page
+	-> Not closable tab
+	-> Multi instance tab
+	* Tab page load kind:
+		-> Plain HTML
+		-> url
+		-> function call [Promise]
+		-> Form from REST url
+			=> Method : GET/POST
+			=> Data
+			=> Headers
+		-> Form from GraphQL url
+			=> Method : GET/POST
+			=> Variables
+			=> Authentication
+			=> Query
+
+* Be able to badge into tabs
+* Close Tab
+
+* Form kinds:
+	-> Simple
+		=> All simple controls
+		=> Upload file must upload file and async update field
+		=> Buttons
+			--> Validate : Get/Post/GraphQL
+			--> Send data: Post/GraphQL
+			--> console log section data:
+	-> Dashboard
+		=> Bunch of requests against
+
+* Form Componenets
+	-> Simple
+		=> Plain text
+		=> No punctation
+		=> Integer
+		=> Positive Integer
+		=> Negative Integer
+		=> Float
+		=> Money [Dollar, Euro, Rial]
+		=> Simple Select
+
+* Timed jobs
+	-> renew the JWT token
+	-> Ajaxes
+	-> ...
+

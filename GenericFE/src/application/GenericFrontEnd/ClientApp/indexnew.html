@@ -64,160 +64,87 @@
 		<script src="js/emptyPage.js"></script>
 
 		<div id="app" style="display: none;">
-			<y-app 
-				:app="$data"
-				@value-changed="valueChanged"
-				@on-validate="validate"
-			></y-app>
-		</div>
-		<div style="display: none;" id="templates">
-
-			<template id="y-app-template">
-				<y-fatal-error v-if="app.props.fatalError"></y-fatal-error>
-				<y-fullpage-loading v-else-if="app.props.inProgress && !app.applicationInfo.inMaintenance"></y-fullpage-loading>
-				<y-page v-else-if="!app.props.inProgress && !app.applicationInfo.inMaintenance" 
-					:app="app"
-					:lang-id="app.applicationInfo.i18n.lang"
-					@left-menu-click="leftMenuClicked"
-					@value-changed="valueChanged"
-					@on-validate="onValidate"
-				></y-page>
-				<y-maintenace-page v-else-if="app.applicationInfo.inMaintenance">
+			<y-fatal-error v-if="props.fatalError"></y-fatal-error>
+				<y-fullpage-loading v-else-if="props.inProgress && !applicationInfo.inMaintenance"></y-fullpage-loading>
+				<template v-else-if="!props.inProgress && !applicationInfo.inMaintenance">
+					<q-layout view="lHr LpR fFf">
+						<y-page-header
+							:left-menu="leftMenu"
+							:right-menu="rightMenu"
+							:application-info="applicationInfo"
+							:tabs-info="tabsInfo"
+							:app="$data"
+						></y-page-header>
+						<y-left-menu
+							:app="$data"
+							:left-menu="leftMenu"
+							:i18n="applicationInfo.i18n"
+							@menu-click="leftMenuClicked"
+						></y-left-menu>
+						<y-right-menu
+							:app="$data"
+							:right-menu="rightMenu"
+							:i18n="applicationInfo.i18n"
+						></y-right-menu>
+						<q-page-container>
+							<q-page class="bg-grey-3 column">
+								<div class="q-mt-none">
+									<q-tab-panels v-model="tabsInfo.currentTab" animated swipeable vertical transition-prev="jump-up" transition-next="jump-up">
+										<q-tab-panel v-for="(tab, index) in tabsInfo.tabs" class="bg-grey-3" :key="tab.id" :name="tab.id">
+											<div v-if="tab.inProgress">
+												<q-inner-loading :showing="tab.inProgress" class="bg-grey-3">
+													<q-spinner-gears size="100px" color="primary"></q-spinner-gears>
+												</q-inner-loading>
+												<p>&nbsp;</p>
+												<p>&nbsp;</p>
+												<p>&nbsp;</p>
+												<p>&nbsp;</p>
+												<p>&nbsp;</p>
+												<p>&nbsp;</p>
+												<p>&nbsp;</p>
+											</div>
+											<div v-if="!tab.inProgress">
+												<div v-for="section in tab.sections" :key="section.id">
+													<y-dummy-label
+														:json="section.meta"
+														:i18n="applicationInfo.i18n"
+													></y-dummy-label>
+													<div v-if="section.meta.type == 'simpleform'">
+														<h3 class="text-h3">{{tr(section.meta.title,applicationInfo.i18n)}}</h3>
+														<q-input 
+															v-for="ctrl in section.controls"
+															v-model="formDATA[''+tab.id+section.id+ctrl.field]"
+															:key="ctrl.field"
+															:label="ctrl.title"
+															counter
+															:dense="true"
+														></q-input>
+													</div>
+												</div>
+												<q-page-container>
+													<q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 18]">
+														<q-btn fab icon="keyboard_arrow_up" color="primary"></q-btn>
+													</q-page-scroller>
+												</q-page-container>
+											</div>
+										</q-tab-panel>
+									</q-tab-panels>
+								</div>
+							</q-page>
+						<y-footer
+							:app="$data"
+							:left-menu="leftMenu"
+							:right-menu="rightMenu"
+							:i18n="applicationInfo.i18n"
+						>
+						</y-footer>
+					</q-layout>
+				</template>
+				<y-maintenace-page v-else-if="applicationInfo.inMaintenance">
 				</y-maintenace-page>
-			</template>
-			<template id="y-page-template">
-				<q-layout view="lHr LpR fFf">
-					<y-page-header
-						:left-menu="app.leftMenu"
-						:right-menu="app.rightMenu"
-						:application-info="app.applicationInfo"
-						:tabs-info="app.tabsInfo"
-						:app="app"
-					></y-page-header>
-					<y-left-menu
-						:app="app"
-						:left-menu="app.leftMenu"
-						:i18n="app.applicationInfo.i18n"
+		</div>
 
-						@menu-click="leftMenuClicked"
-					></y-left-menu>
-					<y-right-menu
-						:app="app"
-						:right-menu="app.rightMenu"
-						:i18n="app.applicationInfo.i18n"
-					></y-right-menu>
-					<y-content
-						:app="app"
-						:i18n="app.applicationInfo.i18n"
-						@value-changed="valueChanged"
-						@on-validate="onValidate"
-					></y-content>
-					<y-footer
-						:app="app"
-						:left-menu="app.leftMenu"
-						:right-menu="app.rightMenu"
-						:i18n="app.applicationInfo.i18n"
-					>
-					</y-footer>
-				</q-layout>
-			</template>
-
-
-			<!-- Done -->
-			<template id="y-footer-template">
-				<q-footer bordered class="primary text-white">
-					<q-toolbar>
-						<q-btn
-							v-if="leftMenu.length > 0"
-							flat
-							dense
-							round
-							@click="leftDrawerOpen = !leftDrawerOpen"
-							icon="menu"
-							aria-label="Menu"
-							>
-							</q-btn>
-						<q-toolbar-title>
-							<span class="text-subtitle2">{{tr(app.applicationInfo.copyright,i18n)}}</span>
-						</q-toolbar-title>
-					<q-btn v-if="rightMenu.length > 0" dense flat round icon="more_vert" @click="rightDrawerOpen = !rightDrawerOpen" ></q-btn>
-					</q-toolbar>
-				</q-footer>
-			</template>
-			<template id="y-content-template">
-				<q-page-container>
-					<q-page class="bg-grey-3 column">
-						<div class="q-mt-none">
-							<q-tab-panels v-model="currentTab" animated swipeable vertical transition-prev="jump-up" transition-next="jump-up">
-								<q-tab-panel v-for="(tab, index) in tabs" class="bg-grey-3" :name="tab.id">
-									<div v-if="tab.inProgress">
-										<q-inner-loading :showing="tab.inProgress" class="bg-grey-3">
-											<q-spinner-gears size="100px" color="primary"></q-spinner-gears>
-										</q-inner-loading>
-										<p>&nbsp;</p>
-										<p>&nbsp;</p>
-										<p>&nbsp;</p>
-										<p>&nbsp;</p>
-										<p>&nbsp;</p>
-										<p>&nbsp;</p>
-										<p>&nbsp;</p>
-									</div>
-									<div v-if="!tab.inProgress">
-										
-										<div v-for="section in tab.sections" :key="section.id">
-											<y-tab-content
-												:json="section"
-												:app="app"
-												:i18n="i18n"
-												:tab="tab"
-												@value-changed="valueChanged"
-												@on-validate="onValidate"
-											></y-tab-content>
-											
-											<!-- 
-											<div v-if="section.meta.type == 'simpleform'">
-												<h3 class="text-h3">{{tr(section.meta.title,applicationInfo.i18n)}}</h3>
-												<q-input 
-													v-for="ctrl in section.controls"
-													v-model="formDATA[''+tab.id+section.id+ctrl.field]"
-													:key="ctrl.field"
-													:label="ctrl.title"
-													counter
-													:dense="true"
-												></q-input>
-											</div> -->
-										</div>
-										<q-page-container>
-									
-											<q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 18]">
-												<q-btn fab icon="keyboard_arrow_up" color="primary"></q-btn>
-											</q-page-scroller>
-										</q-page-container>
-									</div>
-								</q-tab-panel>
-							</q-tab-panels>
-						</div>
-					</q-page>
-	
-			  </q-page-container>
-			</template>
-			<template id="y-tab-content-template">
-				<div class="q-pa-md">
-					<y-form-title
-						:json="json.meta"
-						:i18n="i18n"
-					></y-form-title>
-					<y-simpleform
-						:json="json"
-						:i18n="i18n"
-						:tabid="tab.id"
-						:sectionid="json.id"
-						:app="app"
-						:form-data="app.formDATA"
-						@on-validate="onValidate"
-					></y-simpleform>
-				</div>
-			</template>
+		<div style="display: none;" id="templates">
 			<template id="y-page-header-template">
 				<q-header reveal bordered height-hint="98">
 					<q-toolbar>
@@ -347,50 +274,32 @@
 					</q-list>
 				</q-drawer>
 			</template>
-
-			<!-- Tab content -->
-			<template id="y-form-title-template">
-				<p v-if="json.type == 'label'" class="text-h2">{{tr(json.title,i18n)}}</p>
-			</template>
-			<template id="y-simpleform-template">
-				<q-card v-if="json.meta.type == 'simpleform'" class="my-card">
-					<q-card-section class="bg-primary text-white">
-					  <div class="text-h6">{{tr(json.meta.title,i18n)}}</div>
-					</q-card-section>
-			  
-					<q-separator></q-separator>
-			  
-					<q-card-actions>
-						<template
-							v-for="ctrl in json.controls"	
-						>
-						<q-input
-							v-if="ctrl.type=='text' || ctrl.type == 'integer'"
-							class="q-mx-auto q-my-auto"
-							v-model="app.formDATA[ctrl.UUID]"
-							counter
-							:key="ctrl.field"
-							:label="ctrl.title"
-							:dense="false"
-							:disable="ctrl.disable || json.props.disable || app.props.inProgress || app.props.disable"
-							:readonly="ctrl.readonly || json.props.readonly"
-							:name="ctrl.UUID"
-							:rules="[validate]"
-							:ref="ctrl.UUID"
-						></q-input>
-						
+			<template id="y-footer-template">
+				<q-footer bordered class="primary text-white">
+					<q-toolbar>
 						<q-btn
-							v-if="ctrl.type=='consolelogbutton'"
-							color="teal"
-							:label="tr(ctrl.title,i18n)"
-							@click="consolelog(json.id)">
-						</q-btn>
-
-						</template>
-					</q-card-actions>
-				</q-card>
+							v-if="leftMenu.length > 0"
+							flat
+							dense
+							round
+							@click="leftDrawerOpen = !leftDrawerOpen"
+							icon="menu"
+							aria-label="Menu"
+							>
+							</q-btn>
+						<q-toolbar-title>
+							<span class="text-subtitle2">{{tr(app.applicationInfo.copyright,i18n)}}</span>
+						</q-toolbar-title>
+					<q-btn v-if="rightMenu.length > 0" dense flat round icon="more_vert" @click="rightDrawerOpen = !rightDrawerOpen" ></q-btn>
+					</q-toolbar>
+				</q-footer>
 			</template>
-			<!-- Tab content -->
+
+			<template id="y-dummy-label-template">
+				<div v-if="json.type == 'label'">
+					<p class="text-h2">{{tr(json.title,i18n)}}</p>
+				</div>
+			</template>
 
 			<!-- Less important -->
 			<template id="y-fullpage-loading-template">
@@ -512,7 +421,6 @@
 					</q-splitter>
 				</q-layout>
 			</template>
-
 		</div>
 </body>
 </html>

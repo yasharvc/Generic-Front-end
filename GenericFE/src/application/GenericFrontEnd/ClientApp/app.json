@@ -1,0 +1,63 @@
+{
+	"applicationInfo":{
+		"title":"ACCOUNTING",
+		"desc":"BY PHIGARO",
+		"logoImageURL":"https://cdn.quasar.dev/logo/svg/quasar-logo.svg",
+		"icon":"fas fa-cogs fa-lg fa-3x",
+		"iconType":2,
+		"copyright":"copyright by phigaro 2020",
+		"inMaintenance":true,
+		"i18n":{
+			"lang":1033,
+			"translate":true
+		}
+	},
+	"props":{
+		"disable":false,
+		"inProgress":false,
+		"fatalError":true,
+		"token":""
+	},
+	"tabsInfo":{
+		"currentTab":"homepage",
+		"tabData":[],//every form specific
+		"tabs":[{
+			"id":"homepage",
+			"title":"Add new customer",
+			"inProgress":true
+		}]
+	},
+	"leftMenu":[
+		{
+			"categoryTitle":"Main menu",
+			"order":1,
+			"items":[
+				{
+					"id":"homepage",
+					"title":"Home",
+					"icon":"home",
+					"order":1,
+					"link":"/homepage",
+					"selected":false,
+					"script":"addNewTab(\"HOME\",\"home\",false,\"homepage\",true);"
+				}
+			]
+		}
+	],
+	"rightMenu":[
+		{
+			"categoryTitle":"Accessories",
+			"order":1,
+			"items":[
+				{
+					"id":"0dfea0",
+					"title":"QR barcode",
+					"icon":"qr",
+					"order":1,
+					"link":"/qr",
+					"script":"addNewTab(\"HOME\",\"home\",false,\"homepage\",true);"
+				}
+			]
+		}
+	]
+}

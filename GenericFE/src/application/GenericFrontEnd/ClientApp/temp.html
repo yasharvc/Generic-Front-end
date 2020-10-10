@@ -1,0 +1,80 @@
+
+		 <q-input filled bottom-slots 
+		 v-for="field in Object.keys(section.data)"
+		 :value="tab.formData[section.id][field]"
+		 @keyup="valueChanged(tab.id,section.id,field,$event.target.value)"
+		 @change="valueChanged(tab.id,section.id,field,$event.target.value)"
+		 label="Label"
+		 counter
+		 :dense="true">
+		 <template v-slot:prepend>
+		   <q-icon name="place"></q-icon>
+		 </template>
+		 <template v-slot:append>
+		   <q-icon name="close"
+				 @click="tab.formData[section.id][field] = ''"
+				 class="cursor-pointer"></q-icon>
+		 </template>
+ 
+		 <template v-slot:hint>
+		   Field hint
+		 </template>
+	   </q-input>
+		 
+		 <!-- main test code  -->
+		  <template>
+			<div v-for="ctrl in getControls.controls" class="row">
+		
+				<q-input v-if="ctrl.type == 'integer'" class="form-input" 
+					type="number"
+					:label="ctrl.label"
+					:value="formData[ctrl.field]"
+					:hint="ctrl.hint"
+					:max="ctrl.hasMax ? ctrl.props.max : null"
+					:min="ctrl.hasMin ? ctrl.props.min : NaN"
+					@keyup="valueChanged(getForm.objectId,ctrl.field,$event.target.value)"
+					@change="valueChanged(getForm.objectId,ctrl.field,$event.target.value)"
+					:disable="ctrl.disable || getForm.props.disable || getForm.props.inProgress"
+					:readonly="ctrl.readonly || getForm.props.readonly"
+					:name="ctrl.formName"
+					:rules="[validate]"
+				>
+				<q-icon v-if="formData[ctrl.field] !== ''" name="close" @click="formData[ctrl.field] = ''" class="cursor-pointer"></q-icon>
+				</q-input>
+	
+			</div>
+		</template>
+
+		<q-inner-loading :showing="getForm.props.inProgress">
+			<q-spinner-gears size="50px" color="primary" />
+		  </q-inner-loading>
+		  <q-btn color="primary" label="Change language" onclick="changeControls()"></q-btn>
+
+		  <!-- End of test -->
+
+<q-input v-if="ctrl.type == 'text'" outlined 
+			:value="form[ctrl.field]"
+			@keyup="valueChanged(ctrl.field,$event.target.value)"
+			@change="valueChanged(ctrl.field,$event.target.value)"
+			:disable="ctrl.readonly"
+			:label="ctrl.hint"
+			:class="ctrl.rowDecoration.col"
+			:rules="[validate]"
+			:name="'xyz' + ctrl.field"
+></q-input>
+
+<q-input v-if="ctrl.type=='password'" 
+		:value="form[ctrl.field]"
+		:disable="ctrl.readonly"
+		@keyup="valueChanged(ctrl.field,$event.target.value)"
+		@change="valueChanged(ctrl.field,$event.target.value)"
+		filled :type="ctrl.isPassword ? 'password' : 'text'"
+		:hint="ctrl.hint">
+	<template v-slot:append>
+		<q-icon
+		:name="ctrl.isPassword ? 'visibility_off' : 'visibility'"
+		class="cursor-pointer"
+		@click="ctrl.isPassword = !ctrl.isPassword"
+		/>
+	</template>
+</q-input>

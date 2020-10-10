@@ -1,4 +1,5 @@
 ﻿using Core.Helper;
+using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -13,6 +14,8 @@ namespace Core.Models.System
 		public int HTTPSPort { get; set; }
 		public string GetAbsoluteStaticFilePath()
 		{
+			if (Debugger.IsAttached)
+				return StaticFilePath;
 			var processModule = Process.GetCurrentProcess().MainModule;
 			if (processModule != null)
 			{
