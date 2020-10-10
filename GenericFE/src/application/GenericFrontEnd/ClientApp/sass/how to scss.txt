@@ -1,0 +1,10 @@
+Install sass:
+______________________________________
+npm install -g sass
+
+
+Run this command:
+______________________________________
+sass [src] [dest]
+
+TADDA!

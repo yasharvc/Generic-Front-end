@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="css/framework/googlecss.css" rel="stylesheet" type="text/css">
+		<link href="css/framework/animate_min.css" rel="stylesheet" type="text/css">
+		<link href="css/framework/quasar_rtl_min.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" href="css/framework/fontawesome.css">
+		<link rel="stylesheet" href="css/framework/fontawesome_animation.css">
+
+
+		<link rel="icon" type="image/ico" href="icons/favicon.ico">
+		<link rel="icon" type="image/png" sizes="192x192" href="icons/192x192.png">
+		<link rel="icon" type="image/png" sizes="512x512" href="icons/512x512.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+
+		<link href="css/style.css" rel="stylesheet"/>
+		<script src="js/general/pollyfills.js"></script>
+	</head>
+	
+	<body>
+		
+		<script src="js/framework/config.js"></script>
+		<script src="js/framework/vue.js"></script>
+		<script src="js/framework/quasar.js"></script>
+		<script src="js/framework/fa_ir_umd_min.js"></script>
+		
+		<script src="js/framework/script/tokenizeCommand.js"></script>
+		<script src="js/framework/script/scriptRunner.js"></script>
+		
+
+		<script src="js/i18n/en_and_fa.js"></script>
+		<script src="js/general/i18nService.js"></script>
+		<script src="js/general/simpletypesutils.js"></script>
+
+		<script src="js/control/translate.js"></script>
+		<script src="js/control/creator.js"></script>
+		<script src="js/control/structureValidators.js"></script>
+		
+		<script src="js/form/translate.js"></script>
+		<script src="js/form/structureValidator.js"></script>
+		
+		<script src="js/tab/translate.js"></script>
+		<script src="js/tab/structureValidator.js"></script>
+		
+		<script src="js/leftMenu/translate.js"></script>
+		<script src="js/leftMenu/structureValidator.js"></script>
+
+		<script src="mockServer.js"></script>
+
+	<div id="app">
+		<q-layout v-if="inProgress" animated
+				transition-show="bounceInLeft"
+				transition-hide="jump-up">
+			<div class="absolute-center">
+				<q-spinner
+					color="primary"
+					size="100px"
+					:thickness="2"
+				></q-spinner>
+			</div>
+		</q-layout>
+		<q-layout v-if="!inProgress" view="lHr LpR fFf">
+			<q-header reveal bordered height-hint="98">
+				<q-toolbar>
+					<q-btn
+					v-if="leftMenu.length > 0"
+					flat
+					dense
+					round
+					@click="leftDrawerOpen = !leftDrawerOpen"
+					icon="menu"
+					aria-label="Menu"
+					>
+					</q-btn>
+				<q-toolbar-title>
+					<q-avatar>
+						<img :src="computedApplication.logoImageURL">
+					</q-avatar>
+					{{ computedApplication.title }}
+					<span class="text-subtitle2">{{ computedApplication.desc }}</span>
+				</q-toolbar-title>
+				<q-btn v-if="rightMenu.length > 0" dense flat round icon="more_vert" @click="rightDrawerOpen = !rightDrawerOpen" ></q-btn>
+				</q-toolbar>
+				<q-img
+				src="images/titlebg.jpg"
+				class="header-image absolute-top"
+				></q-img>
+				<q-tabs v-model="currentTab" align="left"  inline-label>
+					<q-tab
+					v-for="(tab , index) in clearTabs()"
+					:name="tab.id" 
+					:icon="tab.icon" 
+					:label="tab.title"
+					>
+					<q-btn v-if="tab.closable != false" @click.stop="closeTab(tab,index)"
+					 size="xs" flat round color="white" icon="close" side></q-btn>
+					<q-badge v-for="badge in tab.badges" :color="badge.color" floating>{{badge.value}}</q-badge>
+					</q-tab>
+				</q-tabs>
+			</q-header>
+
+			<q-drawer 
+				v-model="leftDrawerOpen"
+				side="left"
+				bordered
+				:width="250"
+				:breakpoint="600">
+			<q-scroll-area 
+
+			style="height: calc(100% - 192px); margin-top: 192px; border-right: 1px solid #ddd">
+			  <q-list padding>
+
+				<q-item v-for="(menu, index) in leftMenu"
+					:key="menu.id"
+					clickable
+					exact
+					v-ripple
+					:active="menu.selected"
+					active-class="bg-teal-1 text-grey-8"
+					@click="leftMenuItemClicked(menu,index)"
+				>
+				  <q-item-section avatar>
+					<q-icon :name="menu.icon" />
+				  </q-item-section>
+	
+				  <q-item-section>
+					{{ menu.title }}
+				  </q-item-section>
+				</q-item>
+
+			  </q-list>
+			</q-scroll-area>
+	
+			<q-img class="absolute-top"
+			 src="images/titlebg.jpg"
+			 style="height: 192px">
+			  <div class="absolute-bottom bg-transparent">
+				<q-avatar size="56px" class="q-mb-sm">
+				  <img src="icons/192x192.png">
+				</q-avatar>
+				<div class="text-weight-bold">Razvan Stoenescu</div>
+				<div>@rstoenescu</div>
+			  </div>
+			</q-img>
+			</q-drawer>
+
+			<q-drawer v-model="rightDrawerOpen" side="right" bordered>
+				
+				<q-list>
+					<div v-for="(menu, index) in rightMenu">
+						<q-img
+							src="images/titlebg.jpg"
+							class="header-image absolute-top"
+						></q-img>
+						<q-item clickable v-ripple @click="rightMenuClicked(menu,index)">
+							<q-item-section class="text-right">{{menu.title}}</q-item-section>
+						  <q-item-section avatar>
+							<q-icon color="primary" :name="menu.icon"></q-icon>
+						  </q-item-section>
+						</q-item>
+						<q-separator></q-separator>
+					</div>
+				</q-list>
+			</q-drawer>
+		  <q-page-container>
+				<q-page class="bg-grey-3 column">
+					<div class="q-mt-none">
+						<q-tab-panels v-model="currentTab" animated swipeable vertical transition-prev="jump-up" transition-next="jump-up">
+							<q-tab-panel v-for="(tab, index) in tabs" class="bg-grey-3" :name="tab.id">
+								<div v-if="tab.inProgress">
+									<q-inner-loading :showing="tab.inProgress" class="bg-grey-3">
+										<q-spinner-gears size="100px" color="primary"></q-spinner-gears>
+									</q-inner-loading>
+									<p>&nbsp;</p>
+									<p>&nbsp;</p>
+									<p>&nbsp;</p>
+									<p>&nbsp;</p>
+									<p>&nbsp;</p>
+									<p>&nbsp;</p>
+									<p>&nbsp;</p>
+								</div>
+								<div v-if="!tab.inProgress">
+									<!-- This is where we put all kind of form renderer -->
+									<div v-if="tab.json.type == 'simpleform'">
+										<div v-for="ctrl in clearControls(tab.json)">
+											<q-input 
+												v-if="ctrl.type == 'integer'"
+												class="form-input" 
+												type="number"
+												:label="ctrl.label"
+												:hint="ctrl.hint"
+												:max="ctrl.hasMax ? ctrl.props.max : null"
+												:min="ctrl.hasMin ? ctrl.props.min : NaN"
+												@keyup= "valueChanged(tab,ctrl.field,$event.target.value)"
+												@change="valueChanged(tab,ctrl.field,$event.target.value)"
+												v-bind:value.sync="tab.json.form[ctrl.field]"
+												>
+												<q-icon v-if="tab.json.form[ctrl.field] !== ''" name="close" @click="tab.json.form[ctrl.field] = ''" class="cursor-pointer"></q-icon>
+											</q-input>
+											<pre v-else>{{ ctrl }}</pre>
+										</div>
+										<pre>
+											{{tab.json}}
+										</pre>
+									</div>
+									<div v-if="tab.json.type == 'inputform'">
+										<q-input outlined  :label="tab.json.name"></q-input>
+									</div>
+									<div v-if="tab.json.type == 'grid'">
+										<q-input outlined  :label="tab.json.name"></q-input>
+									</div>
+									{{ tabFormData }}
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+					<q-page-container>
+				
+						<q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 18]">
+							<q-btn fab icon="keyboard_arrow_up" color="primary" />
+						  </q-page-scroller>
+					  </q-page-container>
+								</div>
+							</q-tab-panel>
+						</q-tab-panels>
+					</div>
+				</q-page>
+
+		  </q-page-container>
+		<q-footer bordered class="primary text-white">
+			<q-toolbar>
+				<q-btn
+					v-if="leftMenu.length > 0"
+					flat
+					dense
+					round
+					@click="leftDrawerOpen = !leftDrawerOpen"
+					icon="menu"
+					aria-label="Menu"
+					>
+					</q-btn>
+				<q-toolbar-title>
+					<span class="text-subtitle2">{{ computedApplication.copyright }}</span>
+				</q-toolbar-title>
+			<q-btn v-if="rightMenu.length > 0" dense flat round icon="more_vert" @click="rightDrawerOpen = !rightDrawerOpen" ></q-btn>
+			</q-toolbar>
+		</q-footer>
+
+		<!-- Here on -->
+		</q-layout>
+	</div>
+
+	<script src="js/app/newapp.js"></script>
+
+		</body>
+	</html>
+	

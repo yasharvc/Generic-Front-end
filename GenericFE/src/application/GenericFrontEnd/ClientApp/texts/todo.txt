@@ -1,0 +1,24 @@
+-> using v-html to render html ->> try to use this for rendering html page from url
+-> All possible return from request -> GET/POSt result -> 500:BadGateWay, 401:Forbidden ,...
+and handling , Token expired
+->> Make all Componenet
+
+# https://vuejs.org/v2/guide/class-and-style.html
+<div
+  class="static"
+  v-bind:class="{ active: isActive, 'text-danger': hasError }"
+></div>
+<script>
+data: {
+  isActive: true,
+  hasError: false
+}
+</script>
+
+# https://vuejs.org/v2/guide/events.html
+# https://vuejs.org/v2/guide/components.html#Listening-to-Child-Components-Events
+# https://vuejs.org/v2/guide/components.html#Dynamic-Components
+# https://vuejs.org/v2/guide/components-custom-events.html
+
+## https://vuejs.org/v2/guide/components-slots.html
+

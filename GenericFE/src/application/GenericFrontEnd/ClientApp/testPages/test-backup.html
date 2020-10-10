@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="css/framework/googlecss.css" rel="stylesheet" type="text/css">
+		<link href="css/framework/animate_min.css" rel="stylesheet" type="text/css">
+		<link href="css/framework/quasar_rtl_min.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" href="css/framework/fontawesome.css" />
+		<link href="css/style.css" rel="stylesheet"/>
+	</head>
+	
+	<body>
+		
+		<script src="js/framework/config.js"></script>
+		<script src="js/framework/vue.js"></script>
+		<script src="js/framework/quasar.js"></script>
+		<script src="js/framework/fa_ir_umd_min.js"></script>
+
+		<script src="js/i18n/en_and_fa.js"></script>
+		<script src="js/general/i18nService.js"></script>
+		<script src="js/general/simpletypesutils.js"></script>
+	
+	<!-- Your code here -->
+	<div id="app">
+		<q-layout view="lHr LpR fFf">
+			<q-header reveal >
+				<q-toolbar>
+					<q-btn
+					flat
+					dense
+					round
+					@click="leftDrawerOpen = !leftDrawerOpen"
+					icon="menu"
+					aria-label="Menu"
+					>
+					</q-btn>
+				</q-toolbar>
+
+				<div class="q-px-lg q-pt-xl q-mb-md">
+					<div class="text-h3">Todo</div>
+					<div class="text-subtitle1">{{ todayDate }}</div>
+				</div>
+				<q-img
+				src="images/titlebg.jpg"
+				class="header-image absolute-top"
+				></q-img>
+			</q-header>
+
+			<q-drawer
+				v-model="leftDrawerOpen"
+				show-if-above
+				:width="250"
+				:breakpoint="600"
+			>
+			<q-scroll-area 
+
+			style="height: calc(100% - 192px); margin-top: 192px; border-right: 1px solid #ddd">
+			  <q-list padding>
+
+				<q-item v-for="(menu, index) in menus"
+					clickable
+					exact
+					v-ripple
+					:active="menu.selected"
+					active-class="bg-teal-1 text-grey-8"
+					@click="leftMenuItemClicked(menu,index)"
+				>
+				  <q-item-section avatar>
+					<q-icon :name="menu.icon" />
+				  </q-item-section>
+	
+				  <q-item-section>
+					{{ menu.title }}
+				  </q-item-section>
+				</q-item>
+
+			  </q-list>
+			</q-scroll-area>
+	
+			<q-img class="absolute-top"
+			 src="images/titlebg.jpg"
+			 style="height: 192px">
+			  <div class="absolute-bottom bg-transparent">
+				<q-avatar size="56px" class="q-mb-sm">
+				  <img src="icons/192x192.png">
+				</q-avatar>
+				<div class="text-weight-bold">Razvan Stoenescu</div>
+				<div>@rstoenescu</div>
+			  </div>
+			</q-img>
+		  </q-drawer>
+		  <q-page-container>
+			  <keep-alive>
+				  <q-page class="q-pa-lg bg-grey-3 column">
+					  <div class="q-mt-none">
+						<pre>{{menus}}</pre>
+						<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam rem voluptatem animi quam molestiae hic laboriosam dolor quia quidem temporibus est, magnam sunt similique. Exercitationem ducimus asperiores quas sunt nisi?</p>
+						<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam rem voluptatem animi quam molestiae hic laboriosam dolor quia quidem temporibus est, magnam sunt similique. Exercitationem ducimus asperiores quas sunt nisi?</p>
+						<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam rem voluptatem animi quam molestiae hic laboriosam dolor quia quidem temporibus est, magnam sunt similique. Exercitationem ducimus asperiores quas sunt nisi?</p>
+						<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam rem voluptatem animi quam molestiae hic laboriosam dolor quia quidem temporibus est, magnam sunt similique. Exercitationem ducimus asperiores quas sunt nisi?</p>
+						<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam rem voluptatem animi quam molestiae hic laboriosam dolor quia quidem temporibus est, magnam sunt similique. Exercitationem ducimus asperiores quas sunt nisi?</p>
+						<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam rem voluptatem animi quam molestiae hic laboriosam dolor quia quidem temporibus est, magnam sunt similique. Exercitationem ducimus asperiores quas sunt nisi?</p>
+					  </div>
+				  </q-page>
+			  </keep-alive>
+		  </q-page-container>
+		</q-layout>
+
+	</div>
+
+	<script>
+		var mnus = [
+			{
+				title:"Test",
+				icon:"list",
+				link:'/test',
+				selected:false
+				
+			},{
+				title:"Delete",
+				icon:"delete",
+				link:'/delete',
+				selected:true
+			}
+		];
+		var app = new Vue({
+			el:'#app',
+			data:function (){
+				return{
+					name:"Yashar",
+					leftDrawerOpen:false,
+					menus:mnus,
+					thumbStyle: {
+						right: '4px',
+						borderRadius: '5px',
+						backgroundColor: '#027be3',
+						width: '5px',
+						opacity: 0.75
+					},
+
+					barStyle: {
+						right: '2px',
+						borderRadius: '9px',
+						backgroundColor: '#027be3',
+						width: '9px',
+						opacity: 0.2
+					}
+				};
+			},
+			created: function () {
+				initVueQuasarApp(this);
+			},
+			methods:{
+				leftMenuItemClicked:function(meta,index){
+					//this.leftDrawerOpen = false;
+					for(var i = 0 ; i < mnus.length ; i++){
+						mnus[i].selected = false;
+					}
+					mnus[index].selected = true;
+					this.$q.notify(meta.link);
+				}
+			},
+			computed:{
+				todayDate:function(){
+					var timeStamp = Date.now();
+					return Quasar.date.formatDate(timeStamp,"dddd D MMMM");
+				}
+			}
+		})
+	</script>
+	<!-- Your code here -->
+
+		</body>
+	</html>
+	

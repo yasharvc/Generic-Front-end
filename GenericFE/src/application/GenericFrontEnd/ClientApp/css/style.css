@@ -1,0 +1,22 @@
+.header-image {
+	height: 100%;
+	z-index: -1;
+	opacity: 0.2;
+	filter: grayscale(100%);
+}
+.slow-ani {
+	-webkit-animation: fa-spin 6s infinite linear;
+	animation: fa-spin 6s infinite linear;
+}
+
+.fa-small {
+	font-size: 84px;
+}
+
+.fa-med {
+	font-size: 70px;
+}
+
+.fa-lge {
+	font-size: 48px;
+}
