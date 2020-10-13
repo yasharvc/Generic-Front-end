@@ -3,6 +3,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Models.Application;
 using System.Diagnostics;
 using System.IO;
 
@@ -12,6 +13,7 @@ namespace GenericFrontEnd
 	{
 		public static IConfiguration EnvironmentConfiguration { get; set; }
 		public static Configuration Configuration { get; set; } = new Configuration();
+		public static JwtSettings JwtSettings { get; set; } = new JwtSettings();
 		
 		public static void Main(string[] args)
 		{
@@ -37,6 +39,7 @@ namespace GenericFrontEnd
 		private static void LoadConfiguration()
 		{
 			EnvironmentConfiguration.Bind(nameof(Configuration), Configuration);
+			EnvironmentConfiguration.Bind(nameof(JwtSettings), JwtSettings);
 		}
 
 		public static IWebHostBuilder CreateHostBuilder(string[] args)
