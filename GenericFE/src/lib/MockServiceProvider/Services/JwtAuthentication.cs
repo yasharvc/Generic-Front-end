@@ -1,4 +1,5 @@
-﻿using Core.Helper;
+﻿using Core.Exceptions.Security;
+using Core.Helper;
 using Core.Interfaces.Services;
 using Microsoft.IdentityModel.Tokens;
 using Models.Application;
@@ -30,7 +31,7 @@ namespace MockServiceProvider.Services
 			var jwtValidity = DateTime.Now.AddMinutes(Convert.ToDouble(JwtSettings.ExpireInMinutes));
 			var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-			List<Claim> claims = await GetUserClaims(email,password);
+			List<Claim> claims = await GetUserClaims(email, password);
 
 			var token = new JwtSecurityToken(
 						issuer: JwtSettings.Issuer,
@@ -49,7 +50,7 @@ namespace MockServiceProvider.Services
 			return await Task.Run(() => {
 				if (Users.ContainsKey(user) && Users[user] == password.SHA256Hash())
 					return new List<Claim> { new Claim(ClaimTypes.Role, "ADMINISTRATOR") };
-				throw new Exception();
+				throw new UserNotFoundException();
 			});
 		}
 	}
