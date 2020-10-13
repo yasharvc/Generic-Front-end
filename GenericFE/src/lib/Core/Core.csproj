@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Exceptions\Application\" />
     <Folder Include="Models\Internal\" />
     <Folder Include="Models\Data\" />
   </ItemGroup>
