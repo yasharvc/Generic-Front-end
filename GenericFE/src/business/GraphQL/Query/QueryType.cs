@@ -33,7 +33,7 @@ namespace GraphQL.Query
 						return new AuthenticateResult
 						{
 							Token = await authService.AuthenticateWithEmailPassword(
-								ctx.Argument<string>("mail"), ctx.Argument<string>("password"))
+								ctx.Argument<string>("email"), ctx.Argument<string>("password"))
 						};
 					}
 					catch(Core.Exceptions.ApplicationException appException)

@@ -34,6 +34,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\business\GraphQL\GraphQL.csproj" />
     <ProjectReference Include="..\..\business\Models\Models.csproj" />
+    <ProjectReference Include="..\..\lib\MockServiceProvider\MockServiceProvider.csproj" />
   </ItemGroup>
 
   <ItemGroup>

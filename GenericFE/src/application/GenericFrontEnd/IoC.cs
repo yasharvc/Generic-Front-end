@@ -16,6 +16,8 @@ using System.Text;
 using Models.Application;
 using Microsoft.AspNetCore.DataProtection;
 using System.Security.Claims;
+using Core.Interfaces.Services;
+using MockServiceProvider.Services;
 
 namespace GenericFrontEnd
 {
@@ -35,8 +37,17 @@ namespace GenericFrontEnd
 			AddConfiguration(services, webConfiguration);
 			"Configure Authorization".ConsoleWarning();
 			AuthorizationSetup(services, webConfiguration, configuration);
+
+			"Adding services".ConsoleWarning();
+			AddServices(services, webConfiguration, configuration);
+
 			"Configure GraphQL".ConsoleWarning();
 			AddGgraphQL(services,webConfiguration);
+		}
+
+		private void AddServices(IServiceCollection services, IConfiguration webConfiguration, Configuration configuration)
+		{
+			services.AddSingleton<IJwtAuthentication, JwtAuthentication>();
 		}
 
 		private void AuthorizationSetup(IServiceCollection services, IConfiguration webConfiguration, Configuration configuration)
