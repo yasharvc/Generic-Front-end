@@ -1,2 +1,4 @@
 # Font awesome animation
 https://l-lin.github.io/font-awesome-animation/
+
+https://hasura.io/blog/best-practices-of-using-jwt-with-graphql/

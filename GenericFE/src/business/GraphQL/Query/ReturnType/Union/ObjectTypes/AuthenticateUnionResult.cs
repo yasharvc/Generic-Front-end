@@ -1,0 +1,16 @@
+﻿using GraphQL.Query.ReturnType.Union.Interfaces;
+using GraphQL.Query.ReturnType.Union.ReturnType;
+using HotChocolate.Types;
+
+namespace GraphQL.Query.ReturnType.Union.ObjectTypes
+{
+	class AuthenticateUnionResult : UnionType<IAuthenticateUnion>
+	{
+		protected override void Configure(IUnionTypeDescriptor descriptor)
+		{
+			descriptor.Type<AuthenticateResult>();
+
+			base.Configure(descriptor);
+		}
+	}
+}
