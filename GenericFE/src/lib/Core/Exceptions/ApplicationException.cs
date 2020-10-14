@@ -1,9 +1,8 @@
-﻿using System;
-
-namespace Core.Exceptions
+﻿namespace Core.Exceptions
 {
-	public abstract class ApplicationException : Exception
+	public abstract class ApplicationException : Exception, IException
 	{
-		public int Code { get; set; }
+		protected ApplicationException(int code) : base(code) { }
+		protected ApplicationException(int code, string englishMessage) : base(code, englishMessage) { }
 	}
 }

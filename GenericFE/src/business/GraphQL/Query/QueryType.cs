@@ -1,4 +1,5 @@
 ﻿using Core.Enums;
+using Core.Exceptions;
 using Core.Interfaces.Services;
 using Core.Models.Data;
 using GraphQL.Query.ReturnType.Simple;
@@ -8,6 +9,7 @@ using HotChocolate.Types;
 using Models.Application;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GraphQL.Query
 {
@@ -27,7 +29,7 @@ namespace GraphQL.Query
 				.Argument("email", (m) => m.Type<StringType>())
 				.Argument("password", (m) => m.Type<StringType>())
 				.Resolver(async ctx => {
-					try
+					return await DoActionWithErrorTryAsync(async () =>
 					{
 						var authService = ctx.Service<IJwtAuthentication>();
 						return new AuthenticateResult
@@ -35,32 +37,7 @@ namespace GraphQL.Query
 							Token = await authService.AuthenticateWithEmailPassword(
 								ctx.Argument<string>("email"), ctx.Argument<string>("password"))
 						};
-					}
-					catch(Core.Exceptions.ApplicationException appException)
-					{
-						return new ErrorList
-						{
-							Errors = new List<Error> {
-							new Error {
-								Code = appException.Code,
-								Description=$"{appException.Message}{(appException.InnerException != null ? "-" : "")}{appException.InnerException?.Message ?? ""}",
-								ErrorKind = ErrorKind.General,
-								LanguageLocale = LanguageLocale.EN_US
-							} }
-						};
-					}
-					catch(Exception e) 
-					{
-						return new ErrorList{
-							Errors = new List<Error> {
-							new Error { 
-								Code = -1, 
-								Description=$"{e.Message}{(e.InnerException != null ? "-" : "")}{e.InnerException?.Message ?? ""}",
-								ErrorKind = ErrorKind.UnhandledException,
-								LanguageLocale = LanguageLocale.EN_US
-							} }
-						};
-					}
+					});
 				});
 		}
 
@@ -85,6 +62,54 @@ namespace GraphQL.Query
 						}
 					};
 				});
+		}
+
+		private async Task<object> DoActionWithErrorTryAsync<T>(Func<Task<T>> function)
+		{
+			try
+			{
+				return await function();
+			}
+			catch (SecurityException securityException)
+			{
+				return new ErrorList
+				{
+					Errors = new List<Error> {
+							new Error {
+								Code = securityException.Code,
+								Description=$"{securityException.Message}{(securityException.InnerException != null ? "-" : "")}{securityException.InnerException?.Message ?? ""}",
+								ErrorKind = ErrorKind.Security,
+								LanguageLocale = LanguageLocale.EN_US
+	}
+}
+				};
+			}
+			catch (Core.Exceptions.ApplicationException appException)
+			{
+				return new ErrorList
+				{
+					Errors = new List<Error> {
+							new Error {
+								Code = appException.Code,
+								Description=$"{appException.Message}{(appException.InnerException != null ? "-" : "")}{appException.InnerException?.Message ?? ""}",
+								ErrorKind = ErrorKind.General,
+								LanguageLocale = LanguageLocale.EN_US
+							} }
+				};
+			}
+			catch (Exception e)
+			{
+				return new ErrorList
+				{
+					Errors = new List<Error> {
+							new Error {
+								Code = -1,
+								Description=$"{e.Message}{(e.InnerException != null ? "-" : "")}{e.InnerException?.Message ?? ""}",
+								ErrorKind = ErrorKind.UnhandledException,
+								LanguageLocale = LanguageLocale.EN_US
+							} }
+				};
+			}
 		}
 	}
 }
