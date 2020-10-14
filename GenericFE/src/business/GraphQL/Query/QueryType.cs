@@ -1,12 +1,13 @@
-﻿using Core.Exceptions;
+﻿using Core.Enums;
 using Core.Interfaces.Services;
+using Core.Models.Data;
 using GraphQL.Query.ReturnType.Simple;
+using GraphQL.Query.ReturnType.Union.ObjectTypes;
 using GraphQL.Query.ReturnType.Union.ReturnType;
 using HotChocolate.Types;
 using Models.Application;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace GraphQL.Query
 {
@@ -22,21 +23,43 @@ namespace GraphQL.Query
 		private void AddLogin(IObjectTypeDescriptor<Query> descriptor)
 		{
 			descriptor.Field("login")
-				.Type<AuthenticateResultType>()
+				.Type<AuthenticateUnionResult>()
 				.Argument("email", (m) => m.Type<StringType>())
 				.Argument("password", (m) => m.Type<StringType>())
 				.Resolver(async ctx => {
-					var authService = ctx.Service<IJwtAuthentication>();
 					try
 					{
-
-					}catch(Core.Exceptions.ApplicationException appException)
+						var authService = ctx.Service<IJwtAuthentication>();
+						return new AuthenticateResult
+						{
+							Token = await authService.AuthenticateWithEmailPassword(
+								ctx.Argument<string>("mail"), ctx.Argument<string>("password"))
+						};
+					}
+					catch(Core.Exceptions.ApplicationException appException)
 					{
-
+						return new ErrorList
+						{
+							Errors = new List<Error> {
+							new Error {
+								Code = appException.Code,
+								Description=$"{appException.Message}{(appException.InnerException != null ? "-" : "")}{appException.InnerException?.Message ?? ""}",
+								ErrorKind = ErrorKind.General,
+								LanguageLocale = LanguageLocale.EN_US
+							} }
+						};
 					}
 					catch(Exception e) 
 					{
-						return Error()
+						return new ErrorList{
+							Errors = new List<Error> {
+							new Error { 
+								Code = -1, 
+								Description=$"{e.Message}{(e.InnerException != null ? "-" : "")}{e.InnerException?.Message ?? ""}",
+								ErrorKind = ErrorKind.UnhandledException,
+								LanguageLocale = LanguageLocale.EN_US
+							} }
+						};
 					}
 				});
 		}

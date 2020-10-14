@@ -9,7 +9,7 @@ namespace GraphQL
 	{
 		public IEnumerable<Error> Errors { get; set; }
 	}
-	class ErrorType : ObjectType<ErrorList>
+	class ErrorListType : ObjectType<ErrorList>
 	{
 		protected override void Configure(IObjectTypeDescriptor<ErrorList> descriptor)
 		{
