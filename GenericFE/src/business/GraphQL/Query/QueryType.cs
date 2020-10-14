@@ -1,4 +1,7 @@
-﻿using GraphQL.Query.ReturnType.Simple;
+﻿using Core.Exceptions;
+using Core.Interfaces.Services;
+using GraphQL.Query.ReturnType.Simple;
+using GraphQL.Query.ReturnType.Union.ReturnType;
 using HotChocolate.Types;
 using Models.Application;
 using System;
@@ -12,7 +15,30 @@ namespace GraphQL.Query
 		protected override void Configure(IObjectTypeDescriptor<Query> descriptor)
 		{
 			AddApplicationInfo(descriptor);
+			AddLogin(descriptor);
 			base.Configure(descriptor);
+		}
+
+		private void AddLogin(IObjectTypeDescriptor<Query> descriptor)
+		{
+			descriptor.Field("login")
+				.Type<AuthenticateResultType>()
+				.Argument("email", (m) => m.Type<StringType>())
+				.Argument("password", (m) => m.Type<StringType>())
+				.Resolver(async ctx => {
+					var authService = ctx.Service<IJwtAuthentication>();
+					try
+					{
+
+					}catch(Core.Exceptions.ApplicationException appException)
+					{
+
+					}
+					catch(Exception e) 
+					{
+						return Error()
+					}
+				});
 		}
 
 		private void AddApplicationInfo(IObjectTypeDescriptor<Query> descriptor)

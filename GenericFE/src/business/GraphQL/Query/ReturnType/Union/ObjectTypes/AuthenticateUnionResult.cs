@@ -8,8 +8,8 @@ namespace GraphQL.Query.ReturnType.Union.ObjectTypes
 	{
 		protected override void Configure(IUnionTypeDescriptor descriptor)
 		{
-			descriptor.Type<AuthenticateResult>();
-
+			descriptor.Type<AuthenticateResultType>();
+			descriptor.Type<ErrorType>();
 			base.Configure(descriptor);
 		}
 	}
