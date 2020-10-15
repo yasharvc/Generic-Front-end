@@ -6,6 +6,8 @@ using Microsoft.Extensions.Hosting;
 using Models.Application;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
+using Core.Helper;
 
 namespace GenericFrontEnd
 {
@@ -26,8 +28,9 @@ namespace GenericFrontEnd
 
 		private static void LoadConfiguration(string[] args)
 		{
+			var path = Assembly.GetEntryAssembly().GetPath();
 			EnvironmentConfiguration = new ConfigurationBuilder()
-					.SetBasePath(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName))
+					.SetBasePath(path)
 					.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
 					.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
 					.AddEnvironmentVariables()
