@@ -48,8 +48,15 @@ namespace MockServiceProvider.Services
 		private async Task<List<Claim>> GetUserClaims(string user, string password)
 		{
 			return await Task.Run(() => {
-				if (Users.ContainsKey(user) && Users[user] == password.SHA256Hash())
-					return new List<Claim> { new Claim(ClaimTypes.Role, "ADMINISTRATOR") };
+				try
+				{
+					if (Users.ContainsKey(user) && Users[user] == password.SHA256Hash())
+						return new List<Claim> { new Claim(ClaimTypes.Role, "ADMINISTRATOR") };
+				}
+				catch
+				{
+					throw new UserNotFoundException();
+				}
 				throw new UserNotFoundException();
 			});
 		}

@@ -1,4 +1,31 @@
 var APP = {};
+
+var GraphQL_Post = 1,
+	GraphQL_Get = 2,
+	Get = 3,
+	Post = 4;
+
+var appInfoRequestGQL = {
+	type: GraphQL_Post,
+	url: "/graphql",
+	requestBody: "{applicationInfo{copyright,desc,i18n{lang,translate,},inMaintenance,logoImageURL,title,userId,userInfo,}}",
+	variable: ''
+};
+
+var appInfoRequest = {
+	type: Get,
+	url: "/API/ApplicationInfo",
+	requestBody: {}
+};
+
+var loginRequest = {
+	type: GraphQL_Post,
+	url: "/graphql",
+	requestBody: "query login($email:String  $pass: String){login(email:$email ,password:$pass){...on AuthenticateResult{token}...on ErrorList{errors{code,description,errorKind,languageLocale}}}}",
+	variable: '{"pass": "123","email": "yashar@tribitgroup.com"}'
+}
+
+
 var initialData = {
 	applicationInfo: {},
 	formDATA:{},
@@ -90,7 +117,9 @@ document.addEventListener('DOMContentLoaded', function() {
 			//	initialData.applicationInfo = JSON.parse(res.responseText);
 			//	APP.props.inProgress = false;
 			//});
-			GraphqlPostAsync('/graphql', '{applicationInfo{copyright,desc,i18n{lang,translate,},inMaintenance,logoImageURL,title,userId,userInfo,}}')
+			//GraphqlPostAsync('/graphql', )
+			debugger;
+			runRequest(appInfoRequest)
 				.then(function (res) {
 					debugger;
 					initialData.applicationInfo = res.data.applicationInfo;

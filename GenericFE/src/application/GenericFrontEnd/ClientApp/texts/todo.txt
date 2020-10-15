@@ -22,3 +22,5 @@ data: {
 
 ## https://vuejs.org/v2/guide/components-slots.html
 
+## refresh oken
+https://jasonwatmore.com/post/2020/05/25/aspnet-core-3-api-jwt-authentication-with-refresh-tokens#refresh-token-cs

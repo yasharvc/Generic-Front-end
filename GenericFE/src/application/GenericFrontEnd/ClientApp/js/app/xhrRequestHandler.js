@@ -101,3 +101,24 @@ function GraphqlPostAsync(url,query,variables,headers){
 		xhr.send(JSON.stringify(query));
 	});
 }
+
+
+function runRequest(request, paramsObject, jwtToken) {
+	var headers = [];
+	if (!isNullOrUndefined(jwtToken)) {
+		headers.push({ Authorization: "Bearer " + jwtToken });
+	}
+	if (request.type == GraphQL_Post) {
+		request.variables = JSON.stringify(paramsObject);
+		return GraphqlPostAsync(request.url, request.requestBody, request.variables, headers);
+	}
+	else if (request.type == GraphQL_Get) {
+		var variables = !isNullOrUndefined(paramsObject) ? JSON.stringify(paramsObject) : request.variables;
+		return GraphqlGetAsync(request.url, request.requestBody, variables, headers);
+	}
+	else if (request.type == Get) {
+		var variables = !isNullOrUndefined(paramsObject) ? JSON.stringify(paramsObject) : request.variables;
+		return httpGetAsync(request.url, request.requestBody, headers);
+	}
+	return null;
+}

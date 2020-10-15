@@ -77,7 +77,7 @@ namespace GraphQL.Query
 					Errors = new List<Error> {
 							new Error {
 								Code = securityException.Code,
-								Description=$"{securityException.Message}{(securityException.InnerException != null ? "-" : "")}{securityException.InnerException?.Message ?? ""}",
+								Description=securityException.EnglishMessage,
 								ErrorKind = ErrorKind.Security,
 								LanguageLocale = LanguageLocale.EN_US
 	}
@@ -91,13 +91,13 @@ namespace GraphQL.Query
 					Errors = new List<Error> {
 							new Error {
 								Code = appException.Code,
-								Description=$"{appException.Message}{(appException.InnerException != null ? "-" : "")}{appException.InnerException?.Message ?? ""}",
+								Description=appException.EnglishMessage,
 								ErrorKind = ErrorKind.General,
 								LanguageLocale = LanguageLocale.EN_US
 							} }
 				};
 			}
-			catch (Exception e)
+			catch (System.Exception e)
 			{
 				return new ErrorList
 				{
