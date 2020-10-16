@@ -23,7 +23,7 @@ namespace GenericFrontEnd.Controllers
 					Translate = true
 				}
 			};
-			return Json(obj);
+			return Json(new { ApplicationInfo = obj });
 		}
 	}
 }

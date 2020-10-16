@@ -109,16 +109,26 @@ function runRequest(request, paramsObject, jwtToken) {
 		headers.push({ Authorization: "Bearer " + jwtToken });
 	}
 	if (request.type == GraphQL_Post) {
-		request.variables = JSON.stringify(paramsObject);
-		return GraphqlPostAsync(request.url, request.requestBody, request.variables, headers);
+		var variables = !isNullOrUndefined(paramsObject) ? JSON.stringify(paramsObject) : request.variables;
+		return new Promise(function (resolve, reject) {
+			GraphqlPostAsync(request.url, request.requestBody, variables, headers).then(function (res) { resolve(res.data); })
+				.catch(function (error) { reject(error); });
+		});
 	}
 	else if (request.type == GraphQL_Get) {
 		var variables = !isNullOrUndefined(paramsObject) ? JSON.stringify(paramsObject) : request.variables;
-		return GraphqlGetAsync(request.url, request.requestBody, variables, headers);
+		return new Promise(function (resolve, reject) {
+			GraphqlGetAsync(request.url, request.requestBody, variables, headers).then(function (res) { resolve(res.data); })
+				.catch(function (error) { reject(error); });
+		});
 	}
 	else if (request.type == Get) {
 		var variables = !isNullOrUndefined(paramsObject) ? JSON.stringify(paramsObject) : request.variables;
-		return httpGetAsync(request.url, request.requestBody, headers);
+		return new Promise(function (resolve, reject) {
+			httpGetAsync(request.url, request.requestBody, headers).then(function (res) {
+				resolve(JSON.parse(res.responseText));
+			}).catch(function (error) { reject(error); });
+		});
 	}
 	return null;
 }

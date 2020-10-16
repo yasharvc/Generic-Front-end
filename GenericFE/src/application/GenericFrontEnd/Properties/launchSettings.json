@@ -8,41 +8,12 @@
     }
   },
   "profiles": {
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
     "GenericFrontEnd": {
       "commandName": "Project",
       "launchBrowser": true,
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        {
-          "https_port": 443,
-          "Logging": {
-            "LogLevel": {
-              "Default": "Information",
-              "Microsoft": "Warning",
-              "Microsoft.Hosting.Lifetime": "Information"
-            }
-          },
-          "Configuration": {
-            "MaxRequestBodySize": 1000000,
-            "StaticFilePath": "ClientApp",
-            "ListeningURL": "http://localhost:5200"
-          },
-          "JwtSettings": {
-            "Secret": "SecretKeywqewqeqqqqqqqqqqqweeeeeeeeeeeeeeeeeeeqweqe",
-            "Issuer": "https://xyz.com",
-            "Audience": "https://xyz.com",
-            "ExpireInMinutes": 5256000
-          }
-        }
-        
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }

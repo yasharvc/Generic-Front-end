@@ -119,15 +119,18 @@ document.addEventListener('DOMContentLoaded', function() {
 			//});
 			//GraphqlPostAsync('/graphql', )
 			debugger;
-			runRequest(appInfoRequest)
-				.then(function (res) {
-					debugger;
-					initialData.applicationInfo = res.data.applicationInfo;
-					APP.props.inProgress = false;
-				});
+			this.startFlow();
 			initVueQuasarApp(this);
 		},
-		methods:{
+		methods: {
+			startFlow: function () {
+				runRequest(appInfoRequestGQL)
+					.then(function (res) {
+						debugger;
+						initialData.applicationInfo = res.applicationInfo;
+						APP.props.inProgress = false;
+					});
+			},
 			translate:function(word,placeholders){
 				return tr(word,applicationInfo.i18n,placeholders);
 			},
