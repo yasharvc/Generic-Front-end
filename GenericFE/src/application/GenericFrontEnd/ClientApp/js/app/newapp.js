@@ -23,7 +23,22 @@ var loginRequest = {
 	url: "/graphql",
 	requestBody: "query login($email:String  $pass: String){login(email:$email ,password:$pass){...on AuthenticateResult{token}...on ErrorList{errors{code,description,errorKind,languageLocale}}}}",
 	variable: '{"pass": "123","email": "yashar@tribitgroup.com"}'
-}
+};
+
+var anonymousePageRequest = {
+	type: GraphQL_Post,
+	url: "/graphql",
+	requestBody: "{getAnonymousePage}"
+};
+
+var applicationRequest = {
+	type: GraphQL_Post,
+	url: "/graphql",
+	requestBody: "{application}",
+	variable: '{"pass": "123","email": "yashar@tribitgroup.com"}',
+	authenticationType: 'jwt',
+	authentication: 'TOKEN HERE'
+};//Get leftmenu + rightmenu + statrup tabs + Menu id that must click after loading
 
 
 var initialData = {
@@ -113,23 +128,25 @@ document.addEventListener('DOMContentLoaded', function() {
 			return initialData;
 		},
 		created: function () {
-			//httpGetAsync("/API/ApplicationInfo").then(function (res) {
-			//	initialData.applicationInfo = JSON.parse(res.responseText);
-			//	APP.props.inProgress = false;
-			//});
-			//GraphqlPostAsync('/graphql', )
-			debugger;
 			this.startFlow();
 			initVueQuasarApp(this);
 		},
 		methods: {
-			startFlow: function () {
-				runRequest(appInfoRequestGQL)
-					.then(function (res) {
-						debugger;
-						initialData.applicationInfo = res.applicationInfo;
-						APP.props.inProgress = false;
-					});
+			startFlow: function (step) {
+				if (isNullOrUndefined(step)) {
+					runRequest(appInfoRequestGQL)
+						.then(function (res) {
+							initialData.applicationInfo = res.applicationInfo;
+							APP.props.inProgress = false;
+						});
+				} else {
+					step = parseInt(step);
+					if (step == 1) {
+						if (isEmptyOrNullString(this.props.token)) {
+
+						}
+					}
+				}
 			},
 			translate:function(word,placeholders){
 				return tr(word,applicationInfo.i18n,placeholders);
