@@ -33,7 +33,7 @@ namespace GraphQL.Query
 					return await DoActionWithErrorTryAsync(async () =>
 					{
 						var authService = ctx.Service<IJwtAuthentication>();
-						return new AuthenticateResultType
+						return new AuthenticateResult
 						{
 							Token = await authService.AuthenticateWithEmailPassword(
 								ctx.Argument<string>("email"), ctx.Argument<string>("password"))
@@ -52,7 +52,7 @@ namespace GraphQL.Query
 					return await DoActionWithErrorTryAsync(async () =>
 					{
 						var authService = ctx.Service<IJwtAuthentication>();
-						return new AuthenticateResultType
+						return new AuthenticateResult
 						{
 							Token = await authService.AuthenticateWithEmailPassword(
 								ctx.Argument<string>("email"), ctx.Argument<string>("password"))
