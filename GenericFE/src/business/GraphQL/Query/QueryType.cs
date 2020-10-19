@@ -35,6 +35,11 @@ namespace GraphQL.Query
 						return new PageResponse
 						{
 							Id="anonymouse",
+							PostRenderMenuIdsToClick=new List<string>
+							{
+								"homepage"
+							},
+							
 							LeftMenu=new List<LeftMenuGroup>
 							{
 								new LeftMenuGroup
@@ -52,7 +57,39 @@ namespace GraphQL.Query
 											Icon="login",
 											Kind=LeftMenuItemKind.Redirect,
 											Link="http://www.google.com",
-											props:{}
+											TabProperties= null
+										}
+									}
+								},
+								new LeftMenuGroup
+								{
+									Id = "homepage",
+									GroupName="home",
+									Title="Home",
+									Icon="home",
+									Items=new List<LeftMenuItem>
+									{
+										new LeftMenuItem
+										{
+											Id="homepage",
+											Title="Home",
+											Icon="home",
+											Kind=LeftMenuItemKind.MultiInstanceTab,
+											Link="",
+											TabProperties= new LeftMenuTabProperties
+											{
+												Closable = true,
+												Icon="cog",
+												Id="ddd",
+												Title="home",
+												Request=new Request
+												{
+													Url = "showAlert",
+													Id="r1",
+													CallKind= Models.Enums.CallKind.AwaitableFunction,
+													AuthenticationKind= Models.Enums.AuthenticationKind.None
+												}
+											}
 										}
 									}
 								}

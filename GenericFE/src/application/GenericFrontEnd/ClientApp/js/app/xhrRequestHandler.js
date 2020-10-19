@@ -103,27 +103,31 @@ function GraphqlPostAsync(url,query,variables,headers){
 }
 
 
-function runRequest(request, paramsObject, jwtToken) {
+function runRequest(request, paramsObject, token) {
 	var headers = [];
-	if (!isNullOrUndefined(jwtToken)) {
-		headers.push({ Authorization: "Bearer " + jwtToken });
+	if (!isNullOrUndefined(token)) {
+		if (!isNullOrUndefined(request.authenticationKind)) {
+			if (parseInt(request.authenticationKind) == JwtToken)
+				headers.push({ Authorization: "Bearer " + token });
+
+		} else {
+			headers.push({ Authorization: "Bearer " + token });
+		}
 	}
-	if (request.type == GraphQL_Post) {
-		var variables = !isNullOrUndefined(paramsObject) ? JSON.stringify(paramsObject) : request.variables;
+	var variables = !isNullOrUndefined(paramsObject) ? JSON.stringify(paramsObject) : request.variables;
+	if (request.callKind == GraphQLPost) {
 		return new Promise(function (resolve, reject) {
-			GraphqlPostAsync(request.url, request.requestBody, variables, headers).then(function (res) { resolve(res.data); })
+			GraphqlPostAsync(request.url, request.body, variables, headers).then(function (res) { resolve(res.data); })
 				.catch(function (error) { reject(error); });
 		});
 	}
-	else if (request.type == GraphQL_Get) {
-		var variables = !isNullOrUndefined(paramsObject) ? JSON.stringify(paramsObject) : request.variables;
+	else if (request.callKind == GraphQLGet) {
 		return new Promise(function (resolve, reject) {
-			GraphqlGetAsync(request.url, request.requestBody, variables, headers).then(function (res) { resolve(res.data); })
+			GraphqlGetAsync(request.url, request.body, variables, headers).then(function (res) { resolve(res.data); })
 				.catch(function (error) { reject(error); });
 		});
 	}
-	else if (request.type == Get) {
-		var variables = !isNullOrUndefined(paramsObject) ? JSON.stringify(paramsObject) : request.variables;
+	else if (request.callKind == RestGet) {
 		return new Promise(function (resolve, reject) {
 			httpGetAsync(request.url, request.requestBody, headers).then(function (res) {
 				resolve(JSON.parse(res.responseText));

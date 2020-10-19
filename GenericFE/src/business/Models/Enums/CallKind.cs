@@ -2,11 +2,11 @@
 {
 	public enum CallKind : int
 	{
-		SimpleFunction,
-		AwaitableFunction,
-		RestPost,
-		RestGet,
-		GraphQLPost,
-		GraphQLGet
+		SimpleFunction = 0,
+		AwaitableFunction = 1,
+		RestPost = 2,
+		RestGet = 3,
+		GraphQLPost = 4,
+		GraphQLGet = 5
 	}
 }

@@ -7,12 +7,15 @@ function handleLeftMenuClick(app,group,menu,index){
 		return res;
 	}
 
-	function runCallType(tab){
-		var props = menu.props;
-		props.callType = isNullOrUndefined(props.callType) ? 'function' : props.callType;
-		props.callType = props.callType.trim().toLocaleLowerCase();
-		if(props.callType == 'function'){
-			var call = new Function('return ' + menu.link)();
+	function runCallType(tab) {
+		if (isNullOrUndefined(menu.tabProperties))
+			return;
+		var props = menu.tabProperties;
+		props.callKind = isNullOrUndefined(props.callKind) ? 'AwaitableFunction' : props.callKind;
+		props.callKind = props.callKind.trim().toLocaleLowerCase();
+		debugger;
+		if (props.callKind == 'awaitablefunction') {
+			var call = new Function('return ' + menu.tabProperties.request.url)();
 			call()
 				.then(function(res){
 					setControlsUUID(res,tab.id);
@@ -36,18 +39,19 @@ function handleLeftMenuClick(app,group,menu,index){
 			}
 		});
 	}
-
+	debugger;
 	var kind = menu.kind.toLocaleLowerCase().trim();
 	if(kind == "redirect"){
 		window.location = menu.link;
 	}else if(kind == "multiinstancetab"){
 		var tab = {
-			id : uuidv4(),
-			formData:{},
-			icon:menu.props.icon,
-			title:menu.props.title,
-			closable:menu.props.closable,
-			oneInstance : true,
+			id : menu.id + '_' + uuidv4(),
+			formData: {},
+			icon: isNullOrUndefined(menu.tabProperties) ? "" : menu.tabProperties.icon,
+			title: isNullOrUndefined(menu.tabProperties) ? "" : menu.tabProperties.title,
+			closable: isNullOrUndefined(menu.tabProperties) ? true :menu.tabProperties.closable,
+			request: isNullOrUndefined(menu.tabProperties) ? null : menu.tabProperties.request,
+			oneInstance: false,
 			inProgress:true,
 			badges:[]
 		};

@@ -1,38 +1,30 @@
 var APP = {};
 
-var GraphQL_Post = 1,
-	GraphQL_Get = 2,
-	Get = 3,
-	Post = 4;
-
-var appInfoRequestGQL = {
-	type: GraphQL_Post,
-	url: "/graphql",
-	requestBody: "{applicationInfo{copyright,desc,i18n{lang,translate,},inMaintenance,logoImageURL,title,userId,userInfo,}}",
-	variable: ''
-};
+var appInfoRequestGQL = createRequest(
+	GraphQLPost,
+	"/graphql",
+	"{applicationInfo{copyright,desc,i18n{lang,translate,},inMaintenance,logoImageURL,title,userId,userInfo}}");
 
 var appInfoRequest = {
-	type: Get,
+	type: RestGet,
 	url: "/API/ApplicationInfo",
 	requestBody: {}
 };
 
 var loginRequest = {
-	type: GraphQL_Post,
+	type: GraphQLPost,
 	url: "/graphql",
 	requestBody: "query login($email:String  $pass: String){login(email:$email ,password:$pass){...on AuthenticateResult{token}...on ErrorList{errors{code,description,errorKind,languageLocale}}}}",
 	variable: '{"pass": "123","email": "yashar@tribitgroup.com"}'
 };
 
-var anonymousePageRequest = {
-	type: GraphQL_Post,
-	url: "/graphql",
-	requestBody: "{anonymousePage}"
-};
+var anonymousePageRequest = createRequest(
+	GraphQLPost,
+	"/graphql",
+	"{anonymousePage{...on PageResponse{id,leftMenu{groupName,icon,id,title,items{icon,id,kind,link,title,tabProperties{closable,icon,id,request{authentication{key,value}authenticationKind,body,callKind,id,url,variables}title}}}}}}");
 
 var applicationRequest = {
-	type: GraphQL_Post,
+	type: GraphQLPost,
 	url: "/graphql",
 	requestBody: "{application}",
 	variable: '{"pass": "123","email": "yashar@tribitgroup.com"}',
@@ -57,13 +49,10 @@ var initialData = {
 		tabData:[],
 		tabs:[]
 	},
-	leftMenu:[{
+	leftMenu:[
 		
-		items:
-		[
-			{
-				
-			},
+		//items:
+		//[
 			{
 				id:"homepage",
 				title:"Home",
@@ -80,7 +69,7 @@ var initialData = {
 					callType:'function'//postgraphql|getgraphql|post|get
 				},
 			}
-		]}
+		//]}
 	],
 	rightMenu:[{
 		id:"qrfsdf",
@@ -129,12 +118,17 @@ document.addEventListener('DOMContentLoaded', function() {
 						.then(function (res) {
 							initialData.applicationInfo = res.applicationInfo;
 							APP.props.inProgress = false;
+							setTimeout(function () { APP.startFlow(1); }, 10);
 						});
 				} else {
 					step = parseInt(step);
 					if (step == 1) {
 						if (isEmptyOrNullString(this.props.token)) {
-
+							runRequest(anonymousePageRequest)
+								.then(function (res) {
+									APP.leftMenu = res.anonymousePage.leftMenu;
+									setTimeout(function () { APP.startFlow(2); }, 10);
+								});
 						}
 					}
 				}
