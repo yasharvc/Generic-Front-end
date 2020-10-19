@@ -7,6 +7,7 @@ using GraphQL.Query.ReturnType.Union.ObjectTypes;
 using GraphQL.Query.ReturnType.Union.ReturnType;
 using HotChocolate.Types;
 using Models.Application;
+using Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -34,13 +35,13 @@ namespace GraphQL.Query
 					{
 						return new PageResponse
 						{
-							Id="anonymouse",
-							PostRenderMenuIdsToClick=new List<string>
+							Id = "anonymouse",
+							PostRenderMenuIdsToClick = new List<string>
 							{
 								"homepage"
 							},
-							
-							LeftMenu=new List<LeftMenuGroup>
+
+							LeftMenu = new List<LeftMenuGroup>
 							{
 								new LeftMenuGroup
 								{
@@ -86,8 +87,8 @@ namespace GraphQL.Query
 												{
 													Url = "showAlert",
 													Id="r1",
-													CallKind= Models.Enums.CallKind.AwaitableFunction,
-													AuthenticationKind= Models.Enums.AuthenticationKind.None
+													CallKind= CallKind.AwaitableFunction,
+													AuthenticationKind= AuthenticationKind.None
 												}
 											}
 										}

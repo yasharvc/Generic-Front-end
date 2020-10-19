@@ -21,7 +21,7 @@ var loginRequest = {
 var anonymousePageRequest = createRequest(
 	GraphQLPost,
 	"/graphql",
-	"{anonymousePage{...on PageResponse{id,leftMenu{groupName,icon,id,title,items{icon,id,kind,link,title,tabProperties{closable,icon,id,request{authentication{key,value}authenticationKind,body,callKind,id,url,variables}title}}}}}}");
+	"{anonymousePage{...on PageResponse{id,postRenderMenuIdsToClick,leftMenu{groupName,icon,id,title,items{icon,id,kind,link,title,tabProperties{closable,icon,id,request{authentication{key,value}authenticationKind,body,callKind,id,url,variables}title}}}}}}");
 
 var applicationRequest = {
 	type: GraphQLPost,
@@ -49,28 +49,7 @@ var initialData = {
 		tabData:[],
 		tabs:[]
 	},
-	leftMenu:[
-		
-		//items:
-		//[
-			{
-				id:"homepage",
-				title:"Home",
-				icon:"home",
-
-				kind:"oneinstancetab",
-				link:'showAlert',
-
-				props:{
-					id:"homepage",
-					title:"HOME",
-					icon:"home",
-					closable:false,
-					callType:'function'//postgraphql|getgraphql|post|get
-				},
-			}
-		//]}
-	],
+	leftMenu:[],
 	rightMenu:[{
 		id:"qrfsdf",
 		title:"qr reader",
@@ -126,7 +105,31 @@ document.addEventListener('DOMContentLoaded', function() {
 						if (isEmptyOrNullString(this.props.token)) {
 							runRequest(anonymousePageRequest)
 								.then(function (res) {
+									var menuIdsToClick = res.anonymousePage.postRenderMenuIdsToClick;
+									var clicks = [];
 									APP.leftMenu = res.anonymousePage.leftMenu;
+									if (!isNullOrUndefined(menuIdsToClick)) {
+										APP.leftMenu.forEach(function (group) {
+											var index = 0;
+											group.items.forEach(function (menu) {
+												if (menuIdsToClick.includes(menu.id)) {
+													clicks.push({
+														group: group,
+														menu: menu,
+														index: index
+													});
+												}
+												index++;
+											});
+										});
+										setTimeout(function () {
+											debugger;
+											clicks.forEach(function (item) {
+												handleLeftMenuClick(APP, item.group, item.menu, item.index);
+											});
+										}, 100);
+									}
+
 									setTimeout(function () { APP.startFlow(2); }, 10);
 								});
 						}
