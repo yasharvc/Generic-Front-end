@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Core.Models;
+using System.Collections.Generic;
 
-namespace Core.Models.Application
+namespace Models.Application
 {
 	public class PageResponse : Model
 	{

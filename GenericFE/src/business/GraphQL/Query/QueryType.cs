@@ -19,7 +19,27 @@ namespace GraphQL.Query
 		{
 			AddApplicationInfo(descriptor);
 			AddLogin(descriptor);
+			AddAnonymousePage(descriptor);
 			base.Configure(descriptor);
+		}
+
+		private void AddAnonymousePage(IObjectTypeDescriptor<Query> descriptor)
+		{
+			descriptor.Field("anonymousePage")
+				.Type<AuthenticateUnionResult>()
+				.Argument("email", (m) => m.Type<StringType>())
+				.Argument("password", (m) => m.Type<StringType>())
+				.Resolver(async ctx => {
+					return await DoActionWithErrorTryAsync(async () =>
+					{
+						var authService = ctx.Service<IJwtAuthentication>();
+						return new AuthenticateResultType
+						{
+							Token = await authService.AuthenticateWithEmailPassword(
+								ctx.Argument<string>("email"), ctx.Argument<string>("password"))
+						};
+					});
+				});
 		}
 
 		private void AddLogin(IObjectTypeDescriptor<Query> descriptor)
@@ -32,7 +52,7 @@ namespace GraphQL.Query
 					return await DoActionWithErrorTryAsync(async () =>
 					{
 						var authService = ctx.Service<IJwtAuthentication>();
-						return new AuthenticateResult
+						return new AuthenticateResultType
 						{
 							Token = await authService.AuthenticateWithEmailPassword(
 								ctx.Argument<string>("email"), ctx.Argument<string>("password"))

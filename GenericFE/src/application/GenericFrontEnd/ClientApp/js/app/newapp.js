@@ -28,7 +28,7 @@ var loginRequest = {
 var anonymousePageRequest = {
 	type: GraphQL_Post,
 	url: "/graphql",
-	requestBody: "{getAnonymousePage}"
+	requestBody: "{anonymousePage}"
 };
 
 var applicationRequest = {

@@ -1,6 +1,7 @@
 ﻿using Core.Enums;
+using Core.Models;
 
-namespace Core.Models.Application
+namespace Models.Application
 {
 	public class LeftMenuItem : Model
 	{
