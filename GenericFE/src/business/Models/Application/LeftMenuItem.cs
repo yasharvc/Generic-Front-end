@@ -9,5 +9,6 @@ namespace Models.Application
 		public string Icon { get; set; }
 		public LeftMenuItemKind Kind { get; set; }
 		public string Link { get; set; }
+		public LeftMenuTabProperties TabProperties { get; set; }
 	}
 }

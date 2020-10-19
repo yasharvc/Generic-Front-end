@@ -58,20 +58,11 @@ var initialData = {
 		tabs:[]
 	},
 	leftMenu:[{
-		groupName:"mainmenu",
-		title:"Main Menu",
-		icon:"email",
+		
 		items:
 		[
 			{
-				id:"google",
-				title:"Google",
-				icon:"login",
-
-				kind:"redirect",
-				link:'http://www.google.com',
-
-				props:{}
+				
 			},
 			{
 				id:"homepage",

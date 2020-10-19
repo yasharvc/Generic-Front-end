@@ -26,17 +26,37 @@ namespace GraphQL.Query
 		private void AddAnonymousePage(IObjectTypeDescriptor<Query> descriptor)
 		{
 			descriptor.Field("anonymousePage")
-				.Type<AuthenticateUnionResult>()
+				.Type<PageInformationUnionResult>()
 				.Argument("email", (m) => m.Type<StringType>())
 				.Argument("password", (m) => m.Type<StringType>())
 				.Resolver(async ctx => {
 					return await DoActionWithErrorTryAsync(async () =>
 					{
-						var authService = ctx.Service<IJwtAuthentication>();
-						return new AuthenticateResult
+						return new PageResponse
 						{
-							Token = await authService.AuthenticateWithEmailPassword(
-								ctx.Argument<string>("email"), ctx.Argument<string>("password"))
+							Id="anonymouse",
+							LeftMenu=new List<LeftMenuGroup>
+							{
+								new LeftMenuGroup
+								{
+									Id = "mainmenu",
+									GroupName="main menu",
+									Title="Main Menu",
+									Icon="email",
+									Items=new List<LeftMenuItem>
+									{
+										new LeftMenuItem
+										{
+											Id="google",
+											Title="Google",
+											Icon="login",
+											Kind=LeftMenuItemKind.Redirect,
+											Link="http://www.google.com",
+											props:{}
+										}
+									}
+								}
+							}
 						};
 					});
 				});
